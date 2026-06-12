@@ -30,7 +30,12 @@ image = (
 )
 
 # We use class-based definition to load the model ONCE when container starts
-@app.cls(gpu="T4", image=image, scaledown_window=120)
+@app.cls(
+    gpu="T4",
+    image=image,
+    scaledown_window=120,
+    mounts=[modal.Mount.from_local_dir(os.path.join(os.path.dirname(__file__), "templates"), remote_path="/root/templates")]
+)
 class AIdentifyAPI:
     @modal.enter()
     def load_model(self):
@@ -145,8 +150,7 @@ class AIdentifyAPI:
 
         @fastapi_app.get("/", response_class=HTMLResponse)
         def index():
-            # Modal will automatically include the templates directory when deploying
-            template_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
+            template_path = "/root/templates/index.html"
             with open(template_path, "r", encoding="utf-8") as f:
                 return f.read()
 

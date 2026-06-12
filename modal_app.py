@@ -30,7 +30,7 @@ image = (
 )
 
 # We use class-based definition to load the model ONCE when container starts
-@app.cls(gpu="T4", image=image, container_idle_timeout=120)
+@app.cls(gpu="T4", image=image, scaledown_window=120)
 class AIdentifyAPI:
     @modal.enter()
     def load_model(self):

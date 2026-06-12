@@ -153,9 +153,17 @@ class AIdentifyAPI:
 
         @fastapi_app.get("/", response_class=HTMLResponse)
         def index():
-            template_path = "/root/templates/index.html"
-            with open(template_path, "r", encoding="utf-8") as f:
-                return f.read()
+            possible_paths = [
+                "/templates/index.html",
+                "/root/templates/index.html",
+                "templates/index.html",
+                os.path.join(os.path.dirname(__file__), "templates", "index.html")
+            ]
+            for p in possible_paths:
+                if os.path.exists(p):
+                    with open(p, "r", encoding="utf-8") as f:
+                        return f.read()
+            raise HTTPException(status_code=500, detail=f"Templates not found. Checked: {possible_paths}. Current dir: {os.getcwd()}")
 
         @fastapi_app.get("/api/config")
         def get_config():

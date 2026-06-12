@@ -34,7 +34,7 @@ image = (
     gpu="T4",
     image=image,
     scaledown_window=120,
-    mounts=[modal.Mount.from_local_dir(os.path.join(os.path.dirname(__file__), "templates"), remote_path="/root/templates")]
+    mounts=[modal.mount.Mount.from_local_dir(os.path.join(os.path.dirname(__file__), "templates"), remote_path="/root/templates")]
 )
 class AIdentifyAPI:
     @modal.enter()

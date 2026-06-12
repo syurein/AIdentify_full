@@ -27,14 +27,17 @@ image = (
         "fastapi",
         "python-multipart"
     )
+    .add_local_dir(
+        os.path.join(os.path.dirname(__file__), "templates"),
+        "/root/templates"
+    )
 )
 
 # We use class-based definition to load the model ONCE when container starts
 @app.cls(
     gpu="T4",
     image=image,
-    scaledown_window=120,
-    mounts=[modal.mount.Mount.from_local_dir(os.path.join(os.path.dirname(__file__), "templates"), remote_path="/root/templates")]
+    scaledown_window=120
 )
 class AIdentifyAPI:
     @modal.enter()

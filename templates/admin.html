@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIdentify - 管理者ダッシュボード</title>
+    <!-- Google Fonts: Roboto & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Google Material Design 3 Style Palette (Light Theme / Primary Violet) */
+            --md-primary: #6750A4;
+            --md-on-primary: #FFFFFF;
+            --md-primary-container: #EADDFF;
+            --md-on-primary-container: #21005D;
+            --md-surface: #FEF7FF;
+            --md-surface-variant: #E7E0EC;
+            --md-on-surface: #1D1B20;
+            --md-on-surface-variant: #49454F;
+            --md-outline: #79747E;
+            --md-outline-variant: #CAC4D0;
+            --md-background: #FEF7FF;
+            --md-error: #B3261E;
+            --md-success: #2E7D32;
+
+            /* Elevation Shadows */
+            --shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            --shadow-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            --shadow-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--md-background);
+            color: var(--md-on-surface);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Top Bar Header */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--md-primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .logo-badge i {
+            font-size: 1.5rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: var(--md-on-surface);
+        }
+
+        /* Card container */
+        .md-card {
+            background-color: var(--md-surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--md-outline-variant);
+            box-shadow: var(--shadow-1);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--md-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--md-outline-variant);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Input Controls */
+        .md-input-text {
+            width: 100%;
+            height: 48px;
+            border-radius: 8px;
+            border: 1px solid var(--md-outline);
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            padding: 0 1rem;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .md-input-text:focus {
+            border-color: var(--md-primary);
+            border-width: 2px;
+        }
+
+        .md-textarea {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            border: 1px solid var(--md-outline);
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            outline: none;
+            resize: vertical;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+
+        .md-textarea:focus {
+            border-color: var(--md-primary);
+            border-width: 2px;
+        }
+
+        /* Range sliders */
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-val {
+            font-weight: 700;
+            color: var(--md-primary);
+            font-size: 1rem;
+        }
+
+        .md-slider {
+            width: 100%;
+            height: 6px;
+            background: var(--md-outline-variant);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .md-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--md-primary);
+            cursor: pointer;
+            box-shadow: var(--shadow-1);
+            transition: transform 0.1s;
+        }
+
+        .md-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Action buttons */
+        .md-btn {
+            height: 48px;
+            border-radius: 100px;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 0 2.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .md-btn-primary {
+            background-color: var(--md-primary);
+            color: var(--md-on-primary);
+            box-shadow: var(--shadow-2);
+        }
+
+        .md-btn-primary:hover:not(:disabled) {
+            box-shadow: var(--shadow-3);
+            transform: scale(1.02);
+            filter: brightness(1.08);
+        }
+
+        .md-btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .md-btn-secondary {
+            background-color: transparent;
+            color: var(--md-primary);
+            border: 2px solid var(--md-primary);
+        }
+
+        .md-btn-secondary:hover {
+            background-color: rgba(103, 80, 164, 0.08);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Alerts & Status Notification */
+        .status-alert {
+            display: none;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        .status-alert.success {
+            background-color: rgba(46, 125, 50, 0.08);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            color: var(--md-success);
+        }
+
+        .status-alert.error {
+            background-color: rgba(179, 38, 30, 0.08);
+            border: 1px solid rgba(179, 38, 30, 0.2);
+            color: var(--md-error);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <a href="/" class="logo-badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>AIdentify</span>
+            </a>
+            <h1>管理者環境設定</h1>
+        </header>
+
+        <div class="md-card">
+            <div class="form-section-title">
+                <i class="fa-solid fa-sliders"></i> パラメータ設定
+            </div>
+
+            <!-- Status Alert -->
+            <div class="status-alert" id="statusAlert">
+                <i class="fa-solid id-icon"></i>
+                <span id="statusMessage">設定を保存しました。</span>
+            </div>
+
+            <form id="configForm" onsubmit="saveConfig(event)">
+                <!-- Threshold setting -->
+                <div class="form-group">
+                    <div class="slider-header">
+                        <label for="thresholdSlider">検知信頼度しきい値 (Threshold)</label>
+                        <span class="slider-val" id="thresholdDisplay">0.15</span>
+                    </div>
+                    <input type="range" class="md-slider" id="thresholdSlider" min="0.0" max="1.0" step="0.01" value="0.15" oninput="updateThresholdDisplay(this.value)">
+                </div>
+
+                <!-- Danger Coefficient setting -->
+                <div class="form-group">
+                    <label for="dangerInput">情報漏洩 危険度算出係数</label>
+                    <input type="number" class="md-input-text" id="dangerInput" min="1.0" max="200.0" step="0.5" value="25.0">
+                </div>
+
+                <!-- Sensitive Objects setting -->
+                <div class="form-group">
+                    <label for="objectsTextarea">検知対象オブジェクト（1行に1項目記述してください）</label>
+                    <textarea class="md-textarea" id="objectsTextarea" placeholder="credit card&#10;passport&#10;human face"></textarea>
+                </div>
+
+                <!-- Action Button Row -->
+                <div class="btn-row">
+                    <a href="/" class="md-btn md-btn-secondary">
+                        <i class="fa-solid fa-arrow-left"></i> ホームに戻る
+                    </a>
+                    <button type="submit" class="md-btn md-btn-primary" id="btnSave">
+                        <i class="fa-solid fa-save"></i> 設定を保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Load config on startup
+        window.addEventListener("DOMContentLoaded", () => {
+            fetchConfig();
+        });
+
+        function updateThresholdDisplay(val) {
+            document.getElementById("thresholdDisplay").textContent = parseFloat(val).toFixed(2);
+        }
+
+        function showAlert(type, message) {
+            const alertBox = document.getElementById("statusAlert");
+            const alertMsg = document.getElementById("statusMessage");
+            const icon = alertBox.querySelector(".id-icon");
+
+            alertBox.className = `status-alert ${type}`;
+            alertMsg.textContent = message;
+
+            if (type === "success") {
+                icon.className = "fa-solid fa-circle-check id-icon";
+            } else {
+                icon.className = "fa-solid fa-circle-exclamation id-icon";
+            }
+
+            alertBox.style.display = "flex";
+
+            // Auto-hide success alert after 4 seconds
+            if (type === "success") {
+                setTimeout(() => {
+                    alertBox.style.display = "none";
+                }, 4000);
+            }
+        }
+
+        function fetchConfig() {
+            fetch("/api/admin/config")
+                .then(res => {
+                    if (!res.ok) throw new Error("設定の読み込みに失敗しました");
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById("thresholdSlider").value = data.threshold;
+                    updateThresholdDisplay(data.threshold);
+
+                    document.getElementById("dangerInput").value = data.danger_coefficient;
+
+                    if (data.sensitive_objects && Array.isArray(data.sensitive_objects)) {
+                        document.getElementById("objectsTextarea").value = data.sensitive_objects.join("\n");
+                    }
+                })
+                .catch(err => {
+                    showAlert("error", err.message);
+                });
+        }
+
+        function saveConfig(e) {
+            e.preventDefault();
+            const btnSave = document.getElementById("btnSave");
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 保存中...';
+
+            const threshold = document.getElementById("thresholdSlider").value;
+            const danger_coefficient = document.getElementById("dangerInput").value;
+            const sensitive_objects = document.getElementById("objectsTextarea").value;
+
+            const formData = new FormData();
+            formData.append("threshold", threshold);
+            formData.append("danger_coefficient", danger_coefficient);
+            formData.append("sensitive_objects", sensitive_objects);
+
+            fetch("/api/admin/config", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("設定の保存に失敗しました");
+                    return res.json();
+                })
+                .then(data => {
+                    showAlert("success", "設定を正常に保存しました！次回リクエスト時より反映されます。");
+                })
+                .catch(err => {
+                    showAlert("error", err.message);
+                })
+                .finally(() => {
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = '<i class="fa-solid fa-save"></i> 設定を保存';
+                });
+        }
+    </script>
+</body>
+
+</html>

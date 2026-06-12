@@ -846,7 +846,6 @@
 
             const formData = new FormData();
             formData.append("image", selectedFile);
-            formData.append("danger_coefficient", "50");
             formData.append("mask_face_mosaic", document.getElementById("maskFaceMosaic").checked ? "true" : "false");
 
             fetch("/api/process", {

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIdentify - Personal Data Shield</title>
+    <!-- Google Fonts: Roboto & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Outfit:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Google Material Design 3 Style Palette (Light Theme) */
+            --md-primary: #6750A4;
+            --md-on-primary: #FFFFFF;
+            --md-primary-container: #EADDFF;
+            --md-on-primary-container: #21005D;
+            --md-surface: #FEF7FF;
+            --md-surface-variant: #E7E0EC;
+            --md-on-surface: #1D1B20;
+            --md-on-surface-variant: #49454F;
+            --md-outline: #79747E;
+            --md-outline-variant: #CAC4D0;
+            --md-background: #FEF7FF;
+            --md-error: #B3261E;
+            --md-error-container: #F9DEDC;
+            --md-on-error-container: #410E0B;
+
+            /* Elevation Shadows */
+            --shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            --shadow-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            --shadow-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--md-background);
+            color: var(--md-on-surface);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Top Bar Header */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--md-primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .logo-badge i {
+            font-size: 1.5rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: var(--md-on-surface);
+        }
+
+        header p {
+            color: var(--md-on-surface-variant);
+            font-size: 1rem;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        /* Card container */
+        .md-card {
+            background-color: var(--md-surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--md-outline-variant);
+            box-shadow: var(--shadow-1);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        /* Flow Wizard Screen Handling */
+        .wizard-screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .wizard-screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Controls */
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            color: var(--md-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--md-outline-variant);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Material Select */
+        .md-select {
+            width: 100%;
+            height: 48px;
+            border-radius: 8px;
+            border: 1px solid var(--md-outline);
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            padding: 0 1rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .md-select:focus {
+            border-color: var(--md-primary);
+            border-width: 2px;
+        }
+
+        /* Range sliders */
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .slider-val {
+            font-weight: 700;
+            color: var(--md-primary);
+            font-size: 0.9rem;
+        }
+
+        .md-slider {
+            width: 100%;
+            height: 4px;
+            background: var(--md-outline-variant);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .md-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--md-primary);
+            cursor: pointer;
+        }
+
+        /* Checkbox lists */
+        .checkbox-container {
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 8px;
+            padding: 0.8rem;
+            background-color: rgba(0, 0, 0, 0.02);
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--md-on-surface);
+            cursor: pointer;
+            padding: 0.3rem;
+        }
+
+        .checkbox-item input {
+            accent-color: var(--md-primary);
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Material buttons */
+        .md-btn {
+            height: 48px;
+            border-radius: 100px;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 0 2.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .md-btn-primary {
+            background-color: var(--md-primary);
+            color: var(--md-on-primary);
+            box-shadow: var(--shadow-2);
+        }
+
+        .md-btn-primary:hover:not(:disabled) {
+            box-shadow: var(--shadow-3);
+            transform: scale(1.03);
+            filter: brightness(1.08);
+        }
+
+        .md-btn-secondary {
+            background-color: transparent;
+            color: var(--md-primary);
+            border: 2px solid var(--md-primary);
+        }
+
+        .md-btn-secondary:hover {
+            background-color: rgba(103, 80, 164, 0.08);
+            transform: scale(1.03);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* Normal sized toggle button for Face Mosaic */
+        .face-toggle-btn {
+            height: 48px;
+            border-radius: 100px;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 0 2.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-1);
+        }
+
+        /* Bright, standout, eye-catching color when ON (high-contrast active state) */
+        .face-toggle-btn.active {
+            background-color: #E11D48;
+            /* Vibrant crimson/neon pink-red */
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+        }
+
+        .face-toggle-btn.active:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
+        }
+
+        .face-toggle-btn.inactive {
+            background-color: var(--md-surface-variant);
+            color: var(--md-on-surface-variant);
+            border: 2px dashed var(--md-outline);
+            opacity: 0.8;
+            box-shadow: none;
+        }
+
+        .face-toggle-btn.inactive:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: scale(1.03);
+            opacity: 1;
+        }
+
+        /* Large Action Button */
+        .btn-large-primary {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--md-primary);
+            color: var(--md-on-primary);
+            box-shadow: var(--shadow-2);
+        }
+
+        .btn-large-primary:hover:not(:disabled) {
+            box-shadow: var(--shadow-3);
+            transform: scale(1.02);
+            filter: brightness(1.08);
+        }
+
+        .btn-large-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed var(--md-outline-variant);
+            border-radius: 12px;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.01);
+            margin-bottom: 1.5rem;
+        }
+
+        .drop-zone:hover {
+            background-color: rgba(103, 80, 164, 0.04);
+            border-color: var(--md-primary);
+        }
+
+        .drop-zone i {
+            font-size: 2.5rem;
+            color: var(--md-primary);
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .drop-zone p {
+            font-size: 0.85rem;
+            color: var(--md-on-surface-variant);
+        }
+
+        /* Selected File Preview */
+        .file-preview-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--md-surface-variant);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .file-info i {
+            color: var(--md-primary);
+        }
+
+        .remove-file {
+            cursor: pointer;
+            color: var(--md-error);
+            padding: 8px;
+            margin: -8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .remove-file:hover {
+            background-color: rgba(179, 38, 30, 0.12);
+        }
+
+        .remove-file:active {
+            transform: scale(0.9);
+        }
+
+        .image-clear-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-clear-btn:hover {
+            background-color: var(--md-error);
+            color: #ffffff;
+            transform: scale(1.1);
+            box-shadow: 0 6px 14px rgba(179, 38, 30, 0.4);
+        }
+
+        .image-clear-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Safe zone editor & sandbox */
+        .sandbox-container {
+            position: relative;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-height: 650px;
+            margin-bottom: 1.5rem;
+        }
+
+        .sandbox-container img {
+            max-width: 100%;
+            max-height: 650px;
+            object-fit: contain;
+            user-select: none;
+        }
+
+        .drawing-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        /* Loading / Processing Screen */
+        .loading-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .progress-circle {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--md-outline-variant);
+            border-top-color: var(--md-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Results Display Grid */
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Danger Score Card */
+        .danger-card {
+            background-color: var(--md-surface-variant);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .danger-info h4 {
+            font-size: 0.9rem;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 0.2rem;
+            font-weight: 500;
+        }
+
+        .danger-percentage {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .danger-progress-bar {
+            width: 120px;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .danger-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+        }
+
+        /* Compare toggle */
+        .view-toggle-bar {
+            display: flex;
+            background-color: var(--md-surface-variant);
+            border-radius: 8px;
+            padding: 0.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--md-on-surface-variant);
+        }
+
+        .toggle-btn.active {
+            background-color: var(--md-surface);
+            color: var(--md-primary);
+            box-shadow: var(--shadow-1);
+        }
+
+        /* Results Tags list */
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            background-color: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .badge span {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>AIdentify</span>
+            </div>
+            <h1>個人情報マスキング</h1>
+        </header>
+
+        <!-- Main Card Container -->
+        <div class="md-card">
+
+            <!-- SCREEN 1: Setup & Upload -->
+            <div class="wizard-screen active" id="screenSetup">
+                <!-- Drop Box -->
+                <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                    <i class="fa-solid fa-file-image"></i>
+                    <h3>画像を選択またはドラッグ＆ドロップ</h3>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;"
+                        onchange="handleFileSelect(event)">
+                </div>
+
+
+                <!-- Image preview -->
+                <div id="imagePreviewArea" style="display: none; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="sandbox-container">
+                        <img id="setupPreviewImg" src="" alt="Setup Preview">
+                        <button type="button" class="image-clear-btn" onclick="clearSelectedFile()" aria-label="画像を解除">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="max-width: 500px; margin: 2.5rem auto 1.5rem auto; text-align: center;">
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <input type="checkbox" id="maskFaceMosaic" checked style="display: none;">
+                        <button type="button" id="btnFaceMosaicToggle" class="face-toggle-btn active">
+                            <i class="fa-solid fa-face-smile"></i> 顔のモザイク保護: ON
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Wizard Actions -->
+                <div class="btn-row">
+                    <button class="btn-large-primary" id="btnStartProcess" onclick="processImage()" disabled>
+                        判定/処理開始 <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: Loading -->
+            <div class="wizard-screen" id="screenLoading">
+                <div class="loading-screen">
+                    <div class="progress-circle"></div>
+                    <div>
+                        <h3 style="font-weight: 500; margin-bottom: 0.5rem;">画像を解析中...</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: Results & Comparison -->
+            <div class="wizard-screen" id="screenResult">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-circle-check" style="color: var(--md-primary);"></i> 処理完了
+                </div>
+
+                <!-- Danger Score Card -->
+                <div class="danger-card" id="resultDangerCard"
+                    style="margin-bottom: 1.5rem; transition: background-color 0.5s ease, border-color 0.5s ease; border: 1px solid var(--md-outline-variant);">
+                    <div class="danger-info">
+                        <h4>情報漏洩の危険度</h4>
+                        <div class="danger-progress-bar">
+                            <div class="danger-fill" id="resultDangerFill"></div>
+                        </div>
+                    </div>
+                    <div class="danger-percentage" id="resultDangerVal">0.0%</div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <!-- Sandbox View -->
+                    <div class="sandbox-container">
+                        <img id="resultImg" src="" alt="Result Image">
+                    </div>
+                </div>
+
+                <!-- Results statistics list -->
+                <div style="margin-top: 1.5rem;">
+                    <div class="tags-list" id="resultTagsList">
+                        <!-- Populated by API -->
+                    </div>
+                </div>
+
+                <!-- Wizard Actions -->
+                <div class="btn-row">
+                    <button class="md-btn md-btn-secondary" onclick="backToSetup()">
+                        <i class="fa-solid fa-chevron-left"></i> 戻る
+                    </button>
+                    <a class="md-btn md-btn-primary" id="btnDownload" href="#" download="shielded_image.jpg">
+                        <i class="fa-solid fa-download"></i> ダウンロード
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        let resultOriginalSrc = "";
+        let resultProcessedSrc = "";
+        const setupPreviewImg = document.getElementById("setupPreviewImg");
+
+        // Initialization
+        window.addEventListener("DOMContentLoaded", () => {
+            setupDragAndDrop();
+
+            // Toggle logic for Face Mosaic button
+            const btnFaceMosaicToggle = document.getElementById("btnFaceMosaicToggle");
+            const maskFaceMosaicCheckbox = document.getElementById("maskFaceMosaic");
+
+            btnFaceMosaicToggle.addEventListener("click", () => {
+                const isCurrentlyChecked = maskFaceMosaicCheckbox.checked;
+                maskFaceMosaicCheckbox.checked = !isCurrentlyChecked;
+
+                if (maskFaceMosaicCheckbox.checked) {
+                    btnFaceMosaicToggle.classList.add("active");
+                    btnFaceMosaicToggle.classList.remove("inactive");
+                    btnFaceMosaicToggle.innerHTML = '<i class="fa-solid fa-face-smile"></i> 顔のモザイク保護: ON';
+                } else {
+                    btnFaceMosaicToggle.classList.remove("active");
+                    btnFaceMosaicToggle.classList.add("inactive");
+                    btnFaceMosaicToggle.innerHTML = '<i class="fa-solid fa-face-meh-blank"></i> 顔のモザイク保護: OFF';
+                }
+            });
+        });
+
+        // Drop Zone Drag/Drop events
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById("dropZone");
+
+            ["dragenter", "dragover"].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.style.backgroundColor = "rgba(103, 80, 164, 0.08)";
+                    dropZone.style.borderColor = "var(--md-primary)";
+                }, false);
+            });
+
+            ["dragleave", "drop"].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.style.backgroundColor = "rgba(0, 0, 0, 0.01)";
+                    dropZone.style.borderColor = "var(--md-outline-variant)";
+                }, false);
+            });
+
+            dropZone.addEventListener("drop", (e) => {
+                const dt = e.dataTransfer;
+                if (dt.files.length > 0) {
+                    loadImageFile(dt.files[0]);
+                }
+            });
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files.length > 0) {
+                loadImageFile(e.target.files[0]);
+            }
+        }
+
+        function loadImageFile(file) {
+            selectedFile = file;
+            document.getElementById("dropZone").style.display = "none";
+            document.getElementById("btnStartProcess").removeAttribute("disabled");
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                setupPreviewImg.src = event.target.result;
+                document.getElementById("imagePreviewArea").style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearSelectedFile() {
+            selectedFile = null;
+            document.getElementById("fileInput").value = "";
+            document.getElementById("dropZone").style.display = "block";
+            document.getElementById("imagePreviewArea").style.display = "none";
+            document.getElementById("btnStartProcess").setAttribute("disabled", "true");
+        }
+
+        // Wizard Navigation helper
+        function switchScreen(screenId) {
+            document.querySelectorAll(".wizard-screen").forEach(scr => {
+                scr.classList.remove("active");
+            });
+            document.getElementById(screenId).classList.add("active");
+        }
+
+        // Return to setup screen
+        function backToSetup() {
+            switchScreen("screenSetup");
+        }
+
+
+
+        // Process request
+        function processImage() {
+            if (!selectedFile) return;
+
+            switchScreen("screenLoading");
+
+            const formData = new FormData();
+            formData.append("image", selectedFile);
+            formData.append("danger_coefficient", "50");
+            formData.append("mask_face_mosaic", document.getElementById("maskFaceMosaic").checked ? "true" : "false");
+
+            fetch("/api/process", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Server error");
+                    return res.json();
+                })
+                .then(data => {
+                    resultOriginalSrc = data.original_image;
+                    resultProcessedSrc = data.processed_image;
+
+                    // Show screen
+                    switchScreen("screenResult");
+
+                    // Initialize image
+                    document.getElementById("resultImg").src = data.processed_image;
+
+                    // Setup Download
+                    document.getElementById("btnDownload").href = data.processed_image;
+
+                    // Danger Score display
+                    const danger = data.danger_score || 0;
+                    document.getElementById("resultDangerVal").textContent = danger + "%";
+
+                    const fill = document.getElementById("resultDangerFill");
+                    fill.style.width = danger + "%";
+
+                    // Danger color settings & background shift
+                    const dangerCard = document.getElementById("resultDangerCard");
+                    if (danger < 30) {
+                        fill.style.backgroundColor = "#4CAF50"; // Green
+                        dangerCard.style.backgroundColor = "rgba(76, 175, 80, 0.08)";
+                        dangerCard.style.borderColor = "rgba(76, 175, 80, 0.25)";
+                        document.getElementById("resultDangerVal").style.color = "#4CAF50";
+                    } else if (danger < 70) {
+                        fill.style.backgroundColor = "#FF9800"; // Orange
+                        dangerCard.style.backgroundColor = "rgba(255, 152, 0, 0.08)";
+                        dangerCard.style.borderColor = "rgba(255, 152, 0, 0.25)";
+                        document.getElementById("resultDangerVal").style.color = "#FF9800";
+                    } else {
+                        fill.style.backgroundColor = "#F44336"; // Red
+                        dangerCard.style.backgroundColor = "rgba(244, 67, 54, 0.08)";
+                        dangerCard.style.borderColor = "rgba(244, 67, 54, 0.25)";
+                        document.getElementById("resultDangerVal").style.color = "#F44336";
+                    }
+
+                    // Render badges
+                    const tagsContainer = document.getElementById("resultTagsList");
+                    tagsContainer.innerHTML = "";
+
+                    if (data.detections && data.detections.length > 0) {
+                        data.detections.forEach(det => {
+                            const badge = document.createElement("div");
+                            badge.className = "badge";
+                            badge.innerHTML = `${det.label} <span>${Math.round(det.score * 100)}%</span>`;
+                            tagsContainer.appendChild(badge);
+                        });
+                    } else {
+                        tagsContainer.innerHTML = "<p style='color: var(--md-on-surface-variant); font-size: 0.85rem;'>機密オブジェクトは検出されませんでした。</p>";
+                    }
+                })
+                .catch(err => {
+                    alert("エラーが発生しました: " + err.message);
+                    switchScreen("screenSetup");
+                });
+        }
+    </script>
+</body>
+
+</html>

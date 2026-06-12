@@ -17,3 +17,4 @@ ultralytics==8.3.23
 opencv-python-headless
 futures
 python-multipart
+flask

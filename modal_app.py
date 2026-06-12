@@ -53,10 +53,21 @@ class AIdentifyAPI:
         
         # Default labels to search for
         self.default_sensitive_objects = [
-            "credit card", "passport", "driver's license", "license plate",
-            "identity card", "social security card", "health insurance card",
-            "bank statement", "tax document", "payslip", "utility bill",
-            "medical record", "signature", "human face"
+            "license plate",
+            "digital screen",
+            "document",
+            "text",
+            "credit card",
+            "QR code",
+            "barcode",
+            "passport",
+            "atm screen",
+            "keypad",
+            "payment terminal",
+            "mobile phone screen",
+            "signboard",
+            "sign",
+            "human face"
         ]
 
     def pil_to_cv2(self, pil_img):
@@ -194,9 +205,9 @@ class AIdentifyAPI:
                     text_queries.append("human face")
 
                 # Prep inputs
-                size = max(pil_img.size)
-                target_sizes = torch.Tensor([[size, size]])
-                inputs = self.processor(text=text_queries, images=pil_img, return_tensors="pt").to(self.device)
+                width, height = pil_img.size
+                target_sizes = torch.Tensor([[height, width]])
+                inputs = self.processor(text=[text_queries], images=pil_img, return_tensors="pt").to(self.device)
 
                 with torch.no_grad():
                     outputs = self.model(**inputs)
